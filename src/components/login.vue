@@ -19,7 +19,7 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button class="login-btn" type="primary" @click="submitForm('ruleForm2')">提交</el-button>
+        <el-button class="login-btn" type="primary" @click="submitForm()">提交</el-button>
       </el-form-item>
       </el-form>
     </div>
@@ -58,9 +58,8 @@ data() {
     };
   },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-          console.log(valid)
+    submitForm() {
+      this.$refs.ruleForm2.validate(valid => {
         if (valid) {
           // 数据正确
           this.$http.post("login",this.formData).then(res=>{

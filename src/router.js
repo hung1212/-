@@ -1,14 +1,15 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
 import login from './components/login'
-import index from './components/index'
+import index from './components/index.vue'
+import users from './components/users.vue'
 
 Vue.use(VueRouter)
 export default new VueRouter({
     routes: [
         {
             path: '/',
-            component: index
+            redirect:'/index'
         },
         {
             path: '/login',
@@ -19,8 +20,13 @@ export default new VueRouter({
             path: '/index',
             name: 'index',
             component: index,
+            children:[
+                {
+                    path:'users',
+                    component:users,
+                }
+            ],  
             beforeEnter: (to, from, next) => {
-                console.log(to,from)
                 if (window.sessionStorage.getItem('token')) {
                     next()
                 } else {
@@ -28,7 +34,8 @@ export default new VueRouter({
                         name: 'login'
                     })
                 }
-            }
+            },
+            
         }
     ]
 })
