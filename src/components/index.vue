@@ -16,12 +16,12 @@
           class="el-menu-vertical-demo"
           router
         >
-          <el-submenu index="1">
+          <el-submenu :index="String(index)" v-for="(item,index) of menusList" :key="index">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>用户管理</span>
+              <span>{{item.authName}}</span>
             </template>
-              <el-menu-item index="/index/users">用户列表</el-menu-item>
+              <el-menu-item v-for="it of item.children" :index="'/index/'+it.path" :key="it.id">{{it.authName}}</el-menu-item>
           </el-submenu>
         </el-menu>
       </div>
@@ -35,11 +35,33 @@
 <script>
 export default {
   name: "index",
+  data() {
+    return {
+      menusList:'',
+    }
+    
+  },
   methods: {
     loginOut() {
       window.sessionStorage.removeItem("token");
       this.$router.push("login");
+    },
+    //异步
+    async menus() {
+      let res = await this.$http.get('menus')
+      this.menusList = res.data.data
     }
+    // menus() {
+    //   let res = this.$http.get('menus')
+    //   .then((res)=>{
+    //     console.log(res)
+    //     this.menusList = res.data.data
+    //   })
+      
+    // }
+  },
+  created() {
+    this.menus()
   }
 };
 </script>

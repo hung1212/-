@@ -1,5 +1,4 @@
 <template>
-import { async } from 'q';
   <div class="users">
     <el-breadcrumb separator-class="el-icon-arrow-right" class="my-breadcrumb">
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
@@ -126,7 +125,7 @@ export default {
       fromData: {
         query: "",
         pagenum: 1,
-        pagesize: 4
+        pagesize: 10
       },
       tableData: [],
       addFormVisiable: false,
@@ -165,15 +164,27 @@ export default {
       let res = await this.$http.put(`users/${item.id}/state/${item.mg_state}`);
     },
     deleteUser(current) {
-      this.$http.delete(`users/${current.id}`).then(res => {
-        if (res.status === 200) this.search();
-      });
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$http.delete(`users/${current.id}`).then(res => {
+            if (res.status === 200) this.search();
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+      
     },
-    submitAdduser() {
+    async submitAdduser() {
       this.$refs.addForm.validate(async vali=>{
         if(vali) {
          let res = await this.$http.post("users", this.addForm)
-          if(res.meta.status === 201) {
+          if(res.data.meta.status === 201) {
             this.addFormVisiable = false
             this.search()
           }
